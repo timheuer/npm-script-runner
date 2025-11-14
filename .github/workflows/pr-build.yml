@@ -1,0 +1,22 @@
+name: "PR Build"
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+      - ".github/**"
+      - "resources/**"
+      - "docs/**"
+      - "sample/**"
+      - "scripts/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/base-build.yml
+    with:
+      publish: false

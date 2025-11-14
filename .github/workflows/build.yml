@@ -1,0 +1,24 @@
+name: "Build and Deploy"
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+      - ".github/**"
+      - "resources/**"
+      - "docs/**"
+      - "sample/**"
+      - "scripts/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/base-build.yml
+    permissions:
+      contents: write
+    with:
+      publish: ${{ github.event_name == 'push' }}

@@ -1,0 +1,97 @@
+{
+  "name": "npm-script-runner",
+  "displayName": "NPM Script Runner",
+  "description": "Lists the scripts from package.json and quick access to execute.",
+  "version": "0.0.0-placeholder",
+  "publisher": "timheuer",
+  "author": {
+    "name": "Tim Heuer",
+    "url": "https://timheuer.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timheuer/npm-script-runner.git"
+  },
+  "qna": "https://github.com/timheuer/npm-script-runner/issues/new",
+  "engines": {
+    "vscode": "^1.106.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:npmScriptRunner.scripts",
+    "onCommand:npm-script-runner.runScript",
+    "onCommand:npm-script-runner.refreshScripts",
+    "workspaceContains:package.json"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "npm-script-runner.runScript",
+        "title": "Run NPM Script",
+        "icon": "$(play)"
+      },
+      {
+        "command": "npm-script-runner.refreshScripts",
+        "title": "Refresh NPM Scripts",
+        "icon": "$(refresh)"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "npmScriptRunner.scripts",
+          "name": "NPM Scripts"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "npm-script-runner.runScript",
+          "when": "view == npmScriptRunner.scripts && viewItem == npmScriptRunner.script",
+          "group": "inline",
+          "icon": "$(play)"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "npm-script-runner.refreshScripts",
+          "when": "view == npmScriptRunner.scripts",
+          "group": "navigation",
+          "icon": "$(refresh)"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.106.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "esbuild": "^0.25.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.7.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
