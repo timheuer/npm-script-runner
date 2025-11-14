@@ -21,4 +21,4 @@ jobs:
     permissions:
       contents: write
     with:
-      publish: ${{ github.event_name == 'push' }}
+      publish: true
