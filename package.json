@@ -23,20 +23,30 @@
   ],
   "activationEvents": [
     "onView:npmScriptRunner.scripts",
-    "onCommand:npm-script-runner.runScript",
-    "onCommand:npm-script-runner.refreshScripts",
+    "onCommand:npm-script-run.runScript",
+    "onCommand:npm-script-run.refreshScripts",
     "workspaceContains:package.json"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "NPM Script Runner",
+      "properties": {
+        "npm-script-run.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CodeLens shortcut to run scripts directly from package.json files"
+        }
+      }
+    },
     "commands": [
       {
-        "command": "npm-script-runner.runScript",
+        "command": "npm-script-run.runScript",
         "title": "Run NPM Script",
         "icon": "$(play)"
       },
       {
-        "command": "npm-script-runner.refreshScripts",
+        "command": "npm-script-run.refreshScripts",
         "title": "Refresh NPM Scripts",
         "icon": "$(refresh)"
       }
@@ -52,7 +62,7 @@
     "menus": {
       "view/item/context": [
         {
-          "command": "npm-script-runner.runScript",
+          "command": "npm-script-run.runScript",
           "when": "view == npmScriptRunner.scripts && viewItem == npmScriptRunner.script",
           "group": "inline",
           "icon": "$(play)"
@@ -60,7 +70,7 @@
       ],
       "view/title": [
         {
-          "command": "npm-script-runner.refreshScripts",
+          "command": "npm-script-run.refreshScripts",
           "when": "view == npmScriptRunner.scripts",
           "group": "navigation",
           "icon": "$(refresh)"
