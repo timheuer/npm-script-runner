@@ -2,7 +2,7 @@
   "name": "npmscriptrunner",
   "displayName": "NPM Script Browser",
   "description": "Lists the scripts from package.json and quick access to execute.",
-  "version": "0.1.7",
+  "version": "0.0.0-placeholder",
   "publisher": "TimHeuer",
   "author": {
     "name": "Tim Heuer",
