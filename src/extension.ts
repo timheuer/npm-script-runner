@@ -20,15 +20,15 @@ export function activate(context: vscode.ExtensionContext) {
 			{ language: 'json', pattern: '**/package.json' },
 			codeLensProvider
 		),
-		vscode.commands.registerCommand('npm-script-run.refreshScripts', () => {
+		vscode.commands.registerCommand('npmscriptrunner.refreshScripts', () => {
 			provider.refresh();
 		}),
-		vscode.commands.registerCommand('npm-script-run.runScript', (node: ScriptNode) => {
+		vscode.commands.registerCommand('npmscriptrunner.runScript', (node: ScriptNode) => {
 			if (node instanceof ScriptNode) {
 				terminalManager.runScript(node);
 			}
 		}),
-		vscode.commands.registerCommand('npm-script-run.runScriptFromCodeLens', async (scriptName: string, packageUri: vscode.Uri) => {
+		vscode.commands.registerCommand('npmscriptrunner.runScriptFromCodeLens', async (scriptName: string, packageUri: vscode.Uri) => {
 			// Find the workspace folder for this package.json
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(packageUri);
 			

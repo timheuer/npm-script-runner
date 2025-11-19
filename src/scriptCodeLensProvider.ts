@@ -7,7 +7,7 @@ export class ScriptCodeLensProvider implements vscode.CodeLensProvider {
 	constructor() {
 		// Listen for configuration changes to refresh CodeLenses
 		vscode.workspace.onDidChangeConfiguration((e) => {
-			if (e.affectsConfiguration('npm-script-run.enableCodeLens')) {
+			if (e.affectsConfiguration('npmscriptrunner.enableCodeLens')) {
 				this._onDidChangeCodeLenses.fire();
 			}
 		});
@@ -17,7 +17,7 @@ export class ScriptCodeLensProvider implements vscode.CodeLensProvider {
 		document: vscode.TextDocument,
 		token: vscode.CancellationToken
 	): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-		const config = vscode.workspace.getConfiguration('npm-script-run');
+		const config = vscode.workspace.getConfiguration('npmscriptrunner');
 		const enableCodeLens = config.get<boolean>('enableCodeLens', true);
 
 		if (!enableCodeLens) {
@@ -65,7 +65,7 @@ export class ScriptCodeLensProvider implements vscode.CodeLensProvider {
 
 						const command: vscode.Command = {
 							title: `$(play) Run ${scriptName}`,
-							command: 'npm-script-run.runScriptFromCodeLens',
+							command: 'npmscriptrunner.runScriptFromCodeLens',
 							arguments: [scriptName, document.uri]
 						};
 
