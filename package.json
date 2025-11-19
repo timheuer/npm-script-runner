@@ -1,5 +1,5 @@
 {
-  "name": "npm-script-runner",
+  "name": "npm-script-run",
   "displayName": "NPM Script Runner",
   "description": "Lists the scripts from package.json and quick access to execute.",
   "version": "0.0.0-placeholder",
