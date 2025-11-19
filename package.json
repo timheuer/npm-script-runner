@@ -3,7 +3,7 @@
   "displayName": "NPM Script Runner",
   "description": "Lists the scripts from package.json and quick access to execute.",
   "version": "0.0.0-placeholder",
-  "publisher": "timheuer",
+  "publisher": "TimHeuer",
   "author": {
     "name": "Tim Heuer",
     "url": "https://timheuer.com"
