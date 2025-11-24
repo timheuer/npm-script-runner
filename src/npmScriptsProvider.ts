@@ -29,7 +29,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 		item.tooltip = element.command;
 		item.contextValue = 'npmScriptRunner.script';
 		item.command = {
-			command: 'npm-script-runner.runScript',
+			command: 'npmscriptrunner.runScript',
 			title: 'Run NPM Script',
 			arguments: [element],
 		};
