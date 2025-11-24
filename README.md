@@ -1,4 +1,4 @@
-# npm-script-run README
+# npmscriptrunner README
 
 This extension scans your workspace for `package.json` files, lists the available npm scripts in an Explorer view, and lets you run them with a single click.
 
