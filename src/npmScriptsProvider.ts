@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { NpmTreeNode, PackageNode, ScriptNode } from './nodes';
+import { MessageNode, NpmTreeNode, PackageNode, ScriptNode } from './nodes';
 
 export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> {
 	private _onDidChangeTreeData: vscode.EventEmitter<NpmTreeNode | undefined | null | void> = new vscode.EventEmitter();
@@ -15,6 +15,12 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 	}
 
 	getTreeItem(element: NpmTreeNode): vscode.TreeItem {
+		if (element instanceof MessageNode) {
+			const item = new vscode.TreeItem(element.message, vscode.TreeItemCollapsibleState.None);
+			item.contextValue = 'npmScriptRunner.message';
+			return item;
+		}
+
 		if (element instanceof PackageNode) {
 			const item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.Collapsed);
 			item.tooltip = element.uri.fsPath;
@@ -37,6 +43,10 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 	}
 
 	async getChildren(element?: NpmTreeNode): Promise<NpmTreeNode[]> {
+		if (element instanceof MessageNode) {
+			return [];
+		}
+
 		if (element instanceof PackageNode) {
 			const cache = await this.ensureCache();
 			const key = element.uri.toString();
@@ -44,6 +54,12 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 		}
 
 		const cache = await this.ensureCache();
+
+		// If no packages with scripts were found, show a message
+		if (cache.packages.length === 0) {
+			return [new MessageNode('No npm scripts found')];
+		}
+
 		// If there is only one package.json with scripts, show scripts directly at root
 		if (cache.packages.length === 1) {
 			const onlyPkg = cache.packages[0];

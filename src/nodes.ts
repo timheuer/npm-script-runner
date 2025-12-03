@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 
-export type NpmTreeNode = PackageNode | ScriptNode;
+export type NpmTreeNode = PackageNode | ScriptNode | MessageNode;
+
+export class MessageNode {
+	constructor(public readonly message: string) {}
+}
 
 export class PackageNode {
 	constructor(
