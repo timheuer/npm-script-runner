@@ -50,14 +50,16 @@ jobs:
 
       - name: Verify PAT
         if: ${{ inputs.publish }}
+        shell: pwsh
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
-          if [ -z "${{ secrets.VSCE_PAT }}" ]; then
-            echo "VSCE_PAT is not set. Exiting."
+          if (-not $env:VSCE_PAT) {
+            Write-Host "::error::VSCE_PAT secret is not set"
             exit 1
-          else
-            echo "VSCE_PAT is set."
-            vsce verify-pat ${{ secrets.VSCE_PAT }}
-          fi
+          }
+          Write-Host "VSCE_PAT is set, verifying..."
+          vsce verify-pat timheuer
       - name: Package
         run: vsce package -o ./${{ github.event.repository.name }}.vsix
 
