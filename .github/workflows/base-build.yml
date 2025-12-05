@@ -68,6 +68,11 @@ jobs:
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
+      - name: 📝 Publish Success Annotation
+        if: ${{ inputs.publish }}
+        run: |
+          echo "::notice title=Extension Published::Successfully submitted to VS Code Marketplace: https://marketplace.visualstudio.com/items?itemName=TimHeuer.npmscriptrunner"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
