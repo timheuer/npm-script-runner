@@ -20,5 +20,7 @@ jobs:
     uses: ./.github/workflows/base-build.yml
     permissions:
       contents: write
+    secrets:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
     with:
       publish: true

@@ -8,6 +8,10 @@ on:
         required: false
         default: false
         type: boolean
+    secrets:
+      VSCE_PAT:
+        description: "Personal Access Token for VSCE publishing"
+        required: false
 
 jobs:
   build:
