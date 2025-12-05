@@ -19,5 +19,6 @@ export class ScriptNode {
 		public readonly scriptName: string,
 		public readonly command: string,
 		public readonly packageNode: PackageNode,
+		public readonly lineNumber: number = 0,
 	) {}
 }

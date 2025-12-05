@@ -28,6 +28,20 @@ export function activate(context: vscode.ExtensionContext) {
 				terminalManager.runScript(node);
 			}
 		}),
+		vscode.commands.registerCommand('npmscriptrunner.goToScript', async (node: ScriptNode) => {
+			if (node instanceof ScriptNode) {
+				const document = await vscode.workspace.openTextDocument(node.packageNode.uri);
+				const editor = await vscode.window.showTextDocument(document);
+				
+				// Navigate to the script line
+				const line = node.lineNumber;
+				const lineText = document.lineAt(line).text;
+				const startChar = lineText.indexOf(`"${node.scriptName}"`);
+				const position = new vscode.Position(line, startChar >= 0 ? startChar : 0);
+				editor.selection = new vscode.Selection(position, position);
+				editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
+			}
+		}),
 		vscode.commands.registerCommand('npmscriptrunner.runScriptFromCodeLens', async (scriptName: string, packageUri: vscode.Uri) => {
 			// Find the workspace folder for this package.json
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(packageUri);

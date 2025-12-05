@@ -35,8 +35,8 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 		item.tooltip = element.command;
 		item.contextValue = 'npmScriptRunner.script';
 		item.command = {
-			command: 'npmscriptrunner.runScript',
-			title: 'Run NPM Script',
+			command: 'npmscriptrunner.goToScript',
+			title: 'Go to Script',
 			arguments: [element],
 		};
 		return item;
@@ -123,10 +123,27 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 			if (!json.scripts || typeof json.scripts !== 'object') {
 				return [];
 			}
+			
+			// Find line numbers for each script
+			const lines = text.split(/\r?\n/);
+			const scriptLineNumbers = new Map<string, number>();
+			for (let i = 0; i < lines.length; i++) {
+				const line = lines[i];
+				// Match script entries like: "scriptName": "command"
+				const match = line.match(/^\s*"([^"]+)"\s*:/);
+				if (match) {
+					const scriptName = match[1];
+					if (json.scripts[scriptName] !== undefined) {
+						scriptLineNumbers.set(scriptName, i);
+					}
+				}
+			}
+			
 			const result: ScriptNode[] = [];
 			for (const [name, command] of Object.entries(json.scripts)) {
 				if (typeof command === 'string') {
-					result.push(new ScriptNode(name, command, pkgNode));
+					const lineNumber = scriptLineNumbers.get(name) ?? 0;
+					result.push(new ScriptNode(name, command, pkgNode, lineNumber));
 				}
 			}
 			return result;

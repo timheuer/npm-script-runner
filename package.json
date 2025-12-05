@@ -46,6 +46,10 @@
         "icon": "$(play)"
       },
       {
+        "command": "npmscriptrunner.goToScript",
+        "title": "Go to Script"
+      },
+      {
         "command": "npmscriptrunner.refreshScripts",
         "title": "Refresh NPM Scripts",
         "icon": "$(refresh)"
