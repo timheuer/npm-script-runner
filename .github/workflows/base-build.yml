@@ -48,6 +48,16 @@ jobs:
         run: |
           echo "SimpleVersion: ${{ steps.nbgv.outputs.SimpleVersion }}"
 
+      - name: Verify PAT
+        if: ${{ inputs.publish }}
+        run: |
+          if [ -z "${{ secrets.VSCE_PAT }}" ]; then
+            echo "VSCE_PAT is not set. Exiting."
+            exit 1
+          else
+            echo "VSCE_PAT is set."
+            vsce verify-pat ${{ secrets.VSCE_PAT }}
+          fi
       - name: Package
         run: vsce package -o ./${{ github.event.repository.name }}.vsix
 
