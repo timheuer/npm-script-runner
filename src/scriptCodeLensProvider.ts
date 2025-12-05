@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { getLogger } from './logger';
 
 export class ScriptCodeLensProvider implements vscode.CodeLensProvider {
 	private _onDidChangeCodeLenses = new vscode.EventEmitter<void>();
@@ -75,6 +76,7 @@ export class ScriptCodeLensProvider implements vscode.CodeLensProvider {
 			}
 		} catch (error) {
 			// Invalid JSON or other parsing error - don't provide CodeLenses
+			getLogger().warn(`Failed to parse package.json for CodeLens: ${document.uri.fsPath}`, error);
 			return [];
 		}
 

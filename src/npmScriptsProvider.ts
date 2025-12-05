@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { MessageNode, NpmTreeNode, PackageNode, ScriptNode } from './nodes';
+import { getLogger } from './logger';
 
 export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> {
 	private _onDidChangeTreeData: vscode.EventEmitter<NpmTreeNode | undefined | null | void> = new vscode.EventEmitter();
@@ -10,6 +11,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 	constructor(private readonly context: vscode.ExtensionContext) {}
 
 	refresh(): void {
+		getLogger().debug('Refreshing NPM scripts tree view');
 		this.cache = null;
 		this._onDidChangeTreeData.fire();
 	}
@@ -18,6 +20,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 		if (element instanceof MessageNode) {
 			const item = new vscode.TreeItem(element.message, vscode.TreeItemCollapsibleState.None);
 			item.contextValue = 'npmScriptRunner.message';
+			item.iconPath = new vscode.ThemeIcon('info');
 			return item;
 		}
 
@@ -34,6 +37,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 		item.description = element.command;
 		item.tooltip = element.command;
 		item.contextValue = 'npmScriptRunner.script';
+		item.iconPath = new vscode.ThemeIcon('wrench');
 		item.command = {
 			command: 'npmscriptrunner.goToScript',
 			title: 'Go to Script',
@@ -57,7 +61,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 
 		// If no packages with scripts were found, show a message
 		if (cache.packages.length === 0) {
-			return [new MessageNode('$(info) No npm scripts found in package.json files')];
+			return [new MessageNode('No npm scripts found in package.json files')];
 		}
 
 		// If there is only one package.json with scripts, show scripts directly at root
@@ -65,7 +69,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 			const onlyPkg = cache.packages[0];
 			const scripts = cache.scriptsByPackage.get(onlyPkg.uri.toString()) ?? [];
 			if (scripts.length === 0) {
-				return [new MessageNode('$(info) No npm scripts found in package.json files')];
+				return [new MessageNode('No npm scripts found in package.json files')];
 			}
 			return scripts;
 		}
@@ -77,10 +81,12 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 			return this.cache;
 		}
 
+		getLogger().debug('Building cache of package.json files and scripts');
 		const packages: PackageNode[] = [];
 		const scriptsByPackage = new Map<string, ScriptNode[]>();
 
 		const packageFiles = await vscode.workspace.findFiles('**/package.json', '**/node_modules/**');
+		getLogger().trace(`Found ${packageFiles.length} package.json files`);
 		for (const uri of packageFiles) {
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
 			const label = this.getPackageLabel(uri, workspaceFolder);
@@ -95,6 +101,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 
 		// Only keep packages that have scripts
 		const filteredPackages = packages.filter(pkg => scriptsByPackage.has(pkg.uri.toString()));
+		getLogger().debug(`Cached ${filteredPackages.length} packages with scripts`);
 		this.cache = { packages: filteredPackages, scriptsByPackage };
 		return this.cache;
 	}
@@ -148,7 +155,7 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 			}
 			return result;
 		} catch (err) {
-			console.error(`Failed to read scripts from ${uri.fsPath}:`, err);
+			getLogger().error(`Failed to read scripts from ${uri.fsPath}`, err);
 			return [];
 		}
 	}

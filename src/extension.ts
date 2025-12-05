@@ -5,31 +5,50 @@ import { ScriptNode, PackageNode } from './nodes';
 import { NpmScriptsProvider } from './npmScriptsProvider';
 import { NpmTerminalManager } from './npmTerminalManager';
 import { ScriptCodeLensProvider } from './scriptCodeLensProvider';
+import { initializeLogger, getLogger } from './logger';
 
 // This method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Extension "npm-script-runner" is now active.');
+	const logger = initializeLogger(context);
+	logger.info('Extension "npm-script-runner" is now active.');
 
 	const provider = new NpmScriptsProvider(context);
 	const terminalManager = new NpmTerminalManager();
 	const codeLensProvider = new ScriptCodeLensProvider();
+	
+	// Watch for package.json file changes (create/delete)
+	const packageJsonWatcher = vscode.workspace.createFileSystemWatcher('**/package.json', false, true, false);
+	packageJsonWatcher.onDidCreate(() => {
+		logger.debug('package.json created, refreshing tree view');
+		provider.refresh();
+	});
+	packageJsonWatcher.onDidDelete(() => {
+		logger.debug('package.json deleted, refreshing tree view');
+		provider.refresh();
+	});
+	
+	logger.debug('Registered tree data provider, code lens provider, and file watcher');
 
 	context.subscriptions.push(
+		packageJsonWatcher,
 		vscode.window.registerTreeDataProvider('npmScriptRunner.scripts', provider),
 		vscode.languages.registerCodeLensProvider(
 			{ language: 'json', pattern: '**/package.json' },
 			codeLensProvider
 		),
 		vscode.commands.registerCommand('npmscriptrunner.refreshScripts', () => {
+			getLogger().debug('Refresh scripts command triggered');
 			provider.refresh();
 		}),
 		vscode.commands.registerCommand('npmscriptrunner.runScript', (node: ScriptNode) => {
 			if (node instanceof ScriptNode) {
+				getLogger().info(`Running script: ${node.scriptName}`);
 				terminalManager.runScript(node);
 			}
 		}),
 		vscode.commands.registerCommand('npmscriptrunner.goToScript', async (node: ScriptNode) => {
 			if (node instanceof ScriptNode) {
+				getLogger().debug(`Navigating to script: ${node.scriptName}`);
 				const document = await vscode.workspace.openTextDocument(node.packageNode.uri);
 				const editor = await vscode.window.showTextDocument(document);
 				
@@ -43,6 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 		vscode.commands.registerCommand('npmscriptrunner.runScriptFromCodeLens', async (scriptName: string, packageUri: vscode.Uri) => {
+			getLogger().info(`Running script from CodeLens: ${scriptName}`);
 			// Find the workspace folder for this package.json
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(packageUri);
 			
@@ -60,4 +80,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+	getLogger().info('Extension "npm-script-runner" is deactivating.');
+}
