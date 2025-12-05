@@ -22,9 +22,6 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:npmScriptRunner.scripts",
-    "onCommand:npmscriptrunner.runScript",
-    "onCommand:npmscriptrunner.refreshScripts",
     "workspaceContains:package.json"
   ],
   "main": "./dist/extension.js",
@@ -73,7 +70,8 @@
       "explorer": [
         {
           "id": "npmScriptRunner.scripts",
-          "name": "NPM Scripts"
+          "name": "NPM Scripts",
+          "icon": "$(npm)"
         }
       ]
     },
