@@ -16,10 +16,14 @@ export function activate(context: vscode.ExtensionContext) {
 	const terminalManager = new NpmTerminalManager();
 	const codeLensProvider = new ScriptCodeLensProvider();
 	
-	// Watch for package.json file changes (create/delete)
-	const packageJsonWatcher = vscode.workspace.createFileSystemWatcher('**/package.json', false, true, false);
+	// Watch for package.json file changes (create/change/delete)
+	const packageJsonWatcher = vscode.workspace.createFileSystemWatcher('**/package.json');
 	packageJsonWatcher.onDidCreate(() => {
 		logger.debug('package.json created, refreshing tree view');
+		provider.refresh();
+	});
+	packageJsonWatcher.onDidChange(() => {
+		logger.debug('package.json changed, refreshing tree view');
 		provider.refresh();
 	});
 	packageJsonWatcher.onDidDelete(() => {
