@@ -16,6 +16,8 @@ jobs:
     # Permissions can be overridden by caller; default is read-only
     permissions:
       contents: write
+    env:
+      VSCE_DEBUG: 1
 
     steps:
       - uses: actions/checkout@v4
