@@ -76,7 +76,14 @@
           "icon": "$(refresh)"
         }
       ]
-    }
+    },
+    "viewsWelcome": [
+      {
+        "view": "npmScriptRunner.scripts",
+        "contents": "$(info) No package.json files found in workspace.",
+        "when": "workbenchState != empty && !workspaceContains:**/package.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

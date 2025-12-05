@@ -57,13 +57,17 @@ export class NpmScriptsProvider implements vscode.TreeDataProvider<NpmTreeNode> 
 
 		// If no packages with scripts were found, show a message
 		if (cache.packages.length === 0) {
-			return [new MessageNode('No npm scripts found')];
+			return [new MessageNode('$(info) No npm scripts found in package.json files')];
 		}
 
 		// If there is only one package.json with scripts, show scripts directly at root
 		if (cache.packages.length === 1) {
 			const onlyPkg = cache.packages[0];
-			return cache.scriptsByPackage.get(onlyPkg.uri.toString()) ?? [];
+			const scripts = cache.scriptsByPackage.get(onlyPkg.uri.toString()) ?? [];
+			if (scripts.length === 0) {
+				return [new MessageNode('$(info) No npm scripts found in package.json files')];
+			}
+			return scripts;
 		}
 		return cache.packages;
 	}
